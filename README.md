@@ -16,7 +16,7 @@ This plugin is a wrapper on "sd_notify" [see man page here](https://www.freedesk
 
 When Operating Status is set at "InService" we notify systemd with a "READY=1" and when the Operating Status is set to "Stopping" or "Shutting Down" we notify systemd with "STOPPING=1". This allow systemd to syncronize process in a better way.
 
-As an extra status for the service, for all Operating Status and Health States, we notify systemd with the "STATUS=Operating Status <X>, Health State <Y>"
+As an extra status for the service, for all Operating Status and Health States, we notify systemd with the "STATUS=Operating Status \<X\>, Health State \<Y\> "
 
 By default the plugin is install here "$(PREFIX_LIBEXECDIR)/service_status_plugins/libfty-service-status-systemd.so"
 

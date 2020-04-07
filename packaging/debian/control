@@ -1,0 +1,11 @@
+Source: fty-service-status-systemd
+Maintainer: Clement Perrette <clementperrette@eaton.com>
+Build-Depends: cmake (>=3.0), debhelper (>= 9), fty-service-status-dev, libsystemd-dev
+Standards-Version: 1.0.0
+Section: libs
+Priority: extra
+
+Package: libfty-service-status-systemd
+Architecture: any
+#Depends: ${misc:Depends}
+Description: Plugin library for service status.

@@ -1,0 +1,5 @@
+fty-service-status-systemd (1.0.0) stable; urgency=medium
+
+  * Initial release.
+
+ -- Clement Perrette <clementperrette@eaton.com>  Mon, 06 Apr 2020 21:42:39 +0100

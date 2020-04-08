@@ -12,7 +12,7 @@ add_library(${PROJECT_NAME} SHARED src/systemd.cpp)
 
 target_link_libraries(${PROJECT_NAME}
   #fty-service-status => header only (no cmake package for now)
-  #libsystemd-dev => header only 
+  systemd
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC

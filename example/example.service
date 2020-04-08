@@ -1,0 +1,12 @@
+#Systemd unit for fty-service-status-example
+[Unit]
+Description=Example service status systemd service.
+
+[Service]
+#Define the service Type as notify to be allow systemd to get the notification
+Type=notify
+#path to the example exec and to the systemd plugin
+ExecStart=<PATH_TO_REPO>fty-service-status-systemd/build/fty-service-status-systemd-example <PATH_TO_REPO>fty-service-status-systemd/build/libfty-service-status-systemd.so 
+
+[Install]
+WantedBy=multi-user.target

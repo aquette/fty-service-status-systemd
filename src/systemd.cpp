@@ -19,15 +19,40 @@
 #include "systemd.h"
 #include <systemd/sd-daemon.h>
 
-#include <fstream>
+#include <sstream>
 #include <string>
 #include <map>
 
 //internal variables and functions
 static std::string gPluginLastError = "";
-/*static const std::map<fty::OperatingStatus, std::string> gOperatingStatusStr(
-    {fty::OperatingStatus::Unkown, "Unknown"}
-);*/
+static const std::map<fty::OperatingStatus, std::string> gOperatingStatusStr = {
+    {fty::OperatingStatus::Unkown,          "Unknown"},
+    {fty::OperatingStatus::None,            "None"},
+    {fty::OperatingStatus::Servicing,       "Servicing"},
+    {fty::OperatingStatus::Starting,        "Starting"},
+    {fty::OperatingStatus::Stopping,        "Stopping"},
+    {fty::OperatingStatus::Stopped,         "Stopped"},
+    {fty::OperatingStatus::Aborted,         "Aborted"},
+    {fty::OperatingStatus::Dormant,         "Dormant"},
+    {fty::OperatingStatus::Completed,       "Completed"},
+    {fty::OperatingStatus::Migrating,       "Migrating"},
+    {fty::OperatingStatus::Immigrating,     "Immigrating"},
+    {fty::OperatingStatus::Emigrating,      "Emigrating"},
+    {fty::OperatingStatus::ShuttingDown,    "Shutting Down"},
+    {fty::OperatingStatus::InTest,          "In Test"},
+    {fty::OperatingStatus::Transitioning,   "Transitioning"},
+    {fty::OperatingStatus::InService,       "In Service"}
+};
+
+static const std::map<fty::HealthState, std::string> gHealthStatesStr = {
+    {fty::HealthState::Unkown,          "Unknown"},
+    {fty::HealthState::Ok,            "OK"},
+    {fty::HealthState::Warning,       "Warning"},
+    {fty::HealthState::MinorFailure,        "Minor Failure"},
+    {fty::HealthState::MajorFailure,        "Major Failure"},
+    {fty::HealthState::CriticalFailure,         "Critical Failure"},
+    {fty::HealthState::NonRecoverableFailure,         "Non-recoverable Error"}
+};
 
 //public interfaces
 const char * getPluginName() {
@@ -72,21 +97,34 @@ namespace fty
     ///@return 0 in success, -1  in case of error and message is stored in getPluginLastError
     int ServiceStatusSystemd::set(OperatingStatus os) noexcept {
         m_lastOperatingStatus = os;
-        std::string statusToSet;
+        std::stringstream statusToSet;
 
         //Specific systemd
         if(os == OperatingStatus::InService) {
-            statusToSet+="READY=1\n";
+            statusToSet << "READY=1\n";
         } else if(os == OperatingStatus::Stopping || os == OperatingStatus::ShuttingDown ) {
-            statusToSet+="STOPPING=1\n";
+            statusToSet << "STOPPING=1\n";
         }
 
-        statusToSet += "STATUS=Operating Status <" +
-                        std::to_string(static_cast<uint8_t>(m_lastOperatingStatus)) +
-                        ">, Health State <" + 
-                        std::to_string(static_cast<uint8_t>(m_lastHealthState)) + ">\n";
+        //populate the status
+        statusToSet << "STATUS=Operating Status <";
+        try {
+            statusToSet << gOperatingStatusStr.at(m_lastOperatingStatus);
+        } catch(...) {
+            statusToSet << "Unknown";
+        }
         
-        int returnVal = sd_notifyf(0, statusToSet.c_str());
+        statusToSet <<  ">, Health State <";
+        
+        try {
+            statusToSet << gHealthStatesStr.at(m_lastHealthState);
+        } catch(...) {
+            statusToSet << "Unknown";
+        }                 
+        statusToSet << ">\n";
+        
+        //set the status
+        int returnVal = sd_notifyf(0, statusToSet.str().c_str());
 
         if(returnVal != 0) {
             gPluginLastError = "sd_notify error: " + std::to_string(returnVal);
@@ -101,15 +139,27 @@ namespace fty
     ///@return 0 in success, -1  in case of error and message is stored in getPluginLastError
     int ServiceStatusSystemd::set(HealthState hs) noexcept {
         m_lastHealthState = hs;
-        std::string statusToSet;
+        std::stringstream statusToSet;
 
-        statusToSet += "STATUS=Operating Status <" +
-                        std::to_string(static_cast<uint8_t>(m_lastOperatingStatus)) +
-                        ">, Health State <" + 
-                        std::to_string(static_cast<uint8_t>(m_lastHealthState)) + ">\n";
-
-        int returnVal = sd_notifyf(0,   "READY=1\n"
-                                        "STATUS=Processing requests…\n");
+        //populate the status
+        statusToSet << "STATUS=Operating Status <";
+        try {
+            statusToSet << gOperatingStatusStr.at(m_lastOperatingStatus);
+        } catch(...) {
+            statusToSet << "Unknown";
+        }
+        
+        statusToSet <<  ">, Health State <";
+        
+        try {
+            statusToSet << gHealthStatesStr.at(m_lastHealthState);
+        } catch(...) {
+            statusToSet << "Unknown";
+        }                 
+        statusToSet << ">\n";
+        
+        //set the status
+        int returnVal = sd_notifyf(0, statusToSet.str().c_str());
 
         if(returnVal != 0) {
             gPluginLastError = "sd_notify error: " + std::to_string(returnVal);

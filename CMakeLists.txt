@@ -6,6 +6,7 @@ include(GNUInstallDirs)
 
 #options and default value
 option(BUILD_DOC "Build documentation" ON)
+option(BUILD_EXAMPLE "Build example" OFF)
 
 #create the plugin (library)
 add_library(${PROJECT_NAME} SHARED src/systemd.cpp)
@@ -45,4 +46,10 @@ if(BUILD_DOC)
         else (DOXYGEN_FOUND)
                 message("Doxygen need to be installed to generate the doxygen documentation")
         endif (DOXYGEN_FOUND)
+endif()
+
+#if build example
+if(BUILD_EXAMPLE)
+        #build example
+        add_subdirectory(example)
 endif()

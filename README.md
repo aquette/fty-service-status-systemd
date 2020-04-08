@@ -7,7 +7,10 @@ mkdir build
 cd build
 cmake ..
 make
-make doc # to create doxygen documentation at the root of the project
+make doc # to create doxygen documentation at the root of the project (at least doxygen is needed)
+
+cmake .. -DBUILD_EXAMPLE=On # to also build example
+make
 ```
 
 ## Description
@@ -21,3 +24,18 @@ As an extra status for the service, for all Operating Status and Health States, 
 By default the plugin is install here "$(PREFIX_LIBEXECDIR)/service_status_plugins/libfty-service-status-systemd.so"
 
 The error codes return by the functions of the plugin are the one of "sd_notify" [see man page here](https://www.freedesktop.org/software/systemd/man/sd_notify.html)
+
+## How to use with systemd
+Your service must be Type=notify
+
+```bash
+[Unit]
+...
+
+[Service]
+#Define the service Type as notify to be allow systemd to get the notification
+Type=notify
+...
+```
+
+See example/example.service for the example service and Systemd official documentation for more information about systemd service

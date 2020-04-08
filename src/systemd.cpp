@@ -124,7 +124,7 @@ namespace fty
         statusToSet << ">\n";
         
         //set the status
-        int returnVal = sd_notifyf(0, statusToSet.str().c_str());
+        int returnVal = sd_notifyf(0, "%s", statusToSet.str().c_str());
 
         if(returnVal != 0) {
             gPluginLastError = "sd_notify error: " + std::to_string(returnVal);
@@ -159,7 +159,7 @@ namespace fty
         statusToSet << ">\n";
         
         //set the status
-        int returnVal = sd_notifyf(0, statusToSet.str().c_str());
+        int returnVal = sd_notifyf(0, "%s", statusToSet.str().c_str());
 
         if(returnVal != 0) {
             gPluginLastError = "sd_notify error: " + std::to_string(returnVal);

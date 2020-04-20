@@ -8,12 +8,20 @@ include(GNUInstallDirs)
 option(BUILD_DOC "Build documentation" ON)
 option(BUILD_EXAMPLE "Build example" OFF)
 
+#get dependencies
+
+#get dependencies using pkgconfig
+find_package(PkgConfig REQUIRED) 
+pkg_check_modules(FTY_SERVICE_STATUS fty-service-status REQUIRED IMPORTED_TARGET )
+pkg_check_modules(SYSTEM_D libsystemd REQUIRED IMPORTED_TARGET )
+
+
 #create the plugin (library)
 add_library(${PROJECT_NAME} SHARED src/systemd.cpp)
 
 target_link_libraries(${PROJECT_NAME}
-  #fty-service-status => header only (no cmake package for now)
-  systemd
+  PkgConfig::FTY_SERVICE_STATUS
+  PkgConfig::SYSTEM_D
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC

@@ -2,11 +2,16 @@ cmake_minimum_required(VERSION 3.0)
 
 project(fty-service-status-systemd-example)
 
+#get dependencies
+
+#get dependencies using pkgconfig
+find_package(PkgConfig REQUIRED) 
+pkg_check_modules(FTY_SERVICE_STATUS fty-service-status REQUIRED IMPORTED_TARGET )
+
 add_executable(${PROJECT_NAME} src/example.cpp)
 
 target_link_libraries(${PROJECT_NAME}
-  #fty-service-status => header only (no cmake package for now)
-  ${CMAKE_DL_LIBS}
+  PkgConfig::FTY_SERVICE_STATUS
 )
 
 if(CMAKE_VERSION VERSION_LESS "3.1")

@@ -36,8 +36,8 @@ namespace fty
     {
         private:
         std::string m_serviceName;
-        OperatingStatus m_lastOperatingStatus = OperatingStatus::Unkown;
-        HealthState m_lastHealthState = HealthState::Unkown;
+        OperatingStatus m_lastOperatingStatus = OperatingStatus::Unknown;
+        HealthState m_lastHealthState = HealthState::Unknown;
 
         public:
         ServiceStatusSystemd(const char * serviceName);

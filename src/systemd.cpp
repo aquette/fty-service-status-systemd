@@ -26,7 +26,7 @@
 //internal variables and functions
 static std::string gPluginLastError = "";
 static const std::map<fty::OperatingStatus, std::string> gOperatingStatusStr = {
-    {fty::OperatingStatus::Unkown,          "Unknown"},
+    {fty::OperatingStatus::Unknown,          "Unknown"},
     {fty::OperatingStatus::None,            "None"},
     {fty::OperatingStatus::Servicing,       "Servicing"},
     {fty::OperatingStatus::Starting,        "Starting"},
@@ -45,7 +45,7 @@ static const std::map<fty::OperatingStatus, std::string> gOperatingStatusStr = {
 };
 
 static const std::map<fty::HealthState, std::string> gHealthStatesStr = {
-    {fty::HealthState::Unkown,          "Unknown"},
+    {fty::HealthState::Unknown,          "Unknown"},
     {fty::HealthState::Ok,            "OK"},
     {fty::HealthState::Warning,       "Warning"},
     {fty::HealthState::MinorFailure,        "Minor Failure"},

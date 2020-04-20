@@ -8,25 +8,37 @@ include(GNUInstallDirs)
 option(BUILD_DOC "Build documentation" ON)
 option(BUILD_EXAMPLE "Build example" OFF)
 
-#get dependencies
-
-#get dependencies using pkgconfig
-find_package(PkgConfig REQUIRED) 
-pkg_check_modules(FTY_SERVICE_STATUS fty-service-status REQUIRED IMPORTED_TARGET )
-pkg_check_modules(SYSTEM_D libsystemd REQUIRED IMPORTED_TARGET )
-
-
 #create the plugin (library)
 add_library(${PROJECT_NAME} SHARED src/systemd.cpp)
 
-target_link_libraries(${PROJECT_NAME}
-  PkgConfig::FTY_SERVICE_STATUS
-  PkgConfig::SYSTEM_D
-)
+#set dependencies
+
+#get dependencies using pkgconfig
+find_package(PkgConfig REQUIRED)
+
+# keep this because of debian 8...
+if(CMAKE_VERSION VERSION_LESS "3.7")
+  pkg_check_modules(FTY_SERVICE_STATUS REQUIRED fty-service-status)
+  pkg_check_modules(SYSTEM_D REQUIRED libsystemd)
+
+  target_link_libraries(${PROJECT_NAME}
+    systemd
+  )
+else ()
+  pkg_check_modules(FTY_SERVICE_STATUS REQUIRED IMPORTED_TARGET fty-service-status)
+  pkg_check_modules(SYSTEM_D REQUIRED IMPORTED_TARGET libsystemd)
+
+  target_link_libraries(${PROJECT_NAME}
+    PkgConfig::FTY_SERVICE_STATUS
+    PkgConfig::SYSTEM_D
+  )
+endif()
+
 
 target_include_directories(${PROJECT_NAME} PUBLIC
             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 
+# keep this because of debian 8...
 if(CMAKE_VERSION VERSION_LESS "3.1")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 else ()

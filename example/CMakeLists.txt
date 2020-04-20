@@ -2,18 +2,26 @@ cmake_minimum_required(VERSION 3.0)
 
 project(fty-service-status-systemd-example)
 
-#get dependencies
-
-#get dependencies using pkgconfig
-find_package(PkgConfig REQUIRED) 
-pkg_check_modules(FTY_SERVICE_STATUS fty-service-status REQUIRED IMPORTED_TARGET )
-
 add_executable(${PROJECT_NAME} src/example.cpp)
 
-target_link_libraries(${PROJECT_NAME}
-  PkgConfig::FTY_SERVICE_STATUS
-)
+#set dependencies
+#get dependencies using pkgconfig
+find_package(PkgConfig REQUIRED) 
 
+# keep this because of debian 8...
+if(CMAKE_VERSION VERSION_LESS "3.7")
+  pkg_check_modules(FTY_SERVICE_STATUS  REQUIRED fty-service-status)
+  target_link_libraries(${PROJECT_NAME}
+    ${CMAKE_DL_LIBS}
+  )
+else ()
+  pkg_check_modules(FTY_SERVICE_STATUS  REQUIRED IMPORTED_TARGET fty-service-status)
+  target_link_libraries(${PROJECT_NAME}
+    PkgConfig::FTY_SERVICE_STATUS
+  )
+endif()
+
+# keep this because of debian 8...
 if(CMAKE_VERSION VERSION_LESS "3.1")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 else ()

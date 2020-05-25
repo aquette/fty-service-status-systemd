@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.13)
 
 project(fty-service-status-systemd)
 
@@ -16,34 +16,19 @@ add_library(${PROJECT_NAME} SHARED src/systemd.cpp)
 #get dependencies using pkgconfig
 find_package(PkgConfig REQUIRED)
 
-# keep this because of debian 8...
-if(CMAKE_VERSION VERSION_LESS "3.7")
-  pkg_check_modules(FTY_SERVICE_STATUS REQUIRED fty-service-status)
-  pkg_check_modules(SYSTEM_D REQUIRED libsystemd)
+pkg_check_modules(FTY_SERVICE_STATUS REQUIRED IMPORTED_TARGET fty-service-status)
+pkg_check_modules(SYSTEM_D REQUIRED IMPORTED_TARGET libsystemd)
 
-  target_link_libraries(${PROJECT_NAME}
-    systemd
-  )
-else ()
-  pkg_check_modules(FTY_SERVICE_STATUS REQUIRED IMPORTED_TARGET fty-service-status)
-  pkg_check_modules(SYSTEM_D REQUIRED IMPORTED_TARGET libsystemd)
-
-  target_link_libraries(${PROJECT_NAME}
-    PkgConfig::FTY_SERVICE_STATUS
-    PkgConfig::SYSTEM_D
-  )
-endif()
-
+target_link_libraries(${PROJECT_NAME}
+  PkgConfig::FTY_SERVICE_STATUS
+  PkgConfig::SYSTEM_D
+)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 
-# keep this because of debian 8...
-if(CMAKE_VERSION VERSION_LESS "3.1")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
-else ()
-  target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_11)
-endif()
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 11)
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_11)
 
 target_compile_options(${PROJECT_NAME} PUBLIC
   $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>

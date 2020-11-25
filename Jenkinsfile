@@ -1,8 +1,8 @@
-agentLabel = "devel-image && x86_64"
+@Library('etn-ipm2-jenkins') _
 
 pipeline {
     agent {
-       label agentLabel
+        label infra.getAgentLabels()
     }
 
     parameters {
